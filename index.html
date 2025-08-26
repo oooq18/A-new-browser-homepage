@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新建标签页</title>
+  <!-- 添加网页图标 -->
+  <link rel="icon" href="Button1.svg" type="image/svg+xml">
+  <!-- 引入外部资源 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .bg-gradient-custom {
+        background: linear-gradient(to bottom, #463337, #1c223e, #1b1d1f);
+      }
+    }
+  </style>
+  
+  <style>
+    body {
+      min-height: 100vh;
+    }
+    
+    /* 搜索框外层容器 */
+    .search-container {
+      position: relative;
+      border: 8px solid #16191c;
+      border-radius: 9999px;
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.3);
+    }
+    
+/* 修改搜索框样式 */
+.custom-search-box {
+  background-color: #27292f;
+  border: none;
+  color: #a19f9d;
+  width: 100%;
+  height: 50px; /* 增加高度，使搜索框更大 */
+  padding: 0 20px; /* 增加左右内边距，使输入框更宽 */
+  font-size: 18px; /* 增加字体大小 */
+}
+
+/* 修改外部容器样式 */
+.search-container {
+  position: relative;
+  border: 8px solid #16191c;
+  border-radius: 9999px;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.3);
+  width: 100%; /* 确保外部容器宽度与页面其他元素协调 */
+  max-width: 700px; /* 增加最大宽度 */
+  margin: 0 auto; /* 让容器居中 */
+}
+    
+    .custom-search-box:focus {
+      outline: none;
+    }
+
+    .custom-search-box::placeholder {
+      color: #9d9b99;
+      opacity: 0.8;
+    }
+
+    /* 常用网站方块样式 */
+    .site-box {
+      background-color: #2a2c33;
+      border-radius: 12px;
+      border: 1px solid #41454b;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    /* 网站链接容器 */
+    .site-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 10px;
+      text-decoration: none;
+      position: relative;
+    }
+    
+    /* 网站名称样式 */
+    .site-name {
+      color: white;
+      font-size: 12px;
+      margin-top: 4px;
+      text-align: center;
+      width: 60px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    /* 操作按钮样式 */
+    .site-actions {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      display: none;
+    }
+    
+    .site-link:hover .site-actions {
+      display: flex;
+    }
+    
+    .action-btn {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      cursor: pointer;
+      border: none;
+      padding: 0;
+      margin-left: 2px;
+    }
+    
+    /* 添加网站按钮 */
+    .add-site-btn {
+      background-color: #2a2c33;
+      border: 1px dashed #41454b;
+      color: #41454b;
+    }
+    
+    /* 模态框样式 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal {
+      background-color: #27292f;
+      border-radius: 20px; /* 窗口更圆润 */
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      transform: translateY(-20px);
+      transition: all 0.3s ease;
+    }
+    
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #41454b;
+      border-radius: 10px; /* 输入框更圆润 */
+      background-color: #1e1f23;
+      color: #fff;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 15px; /* 按钮更圆润 */
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+      background-color: #3b5bdb; /* 深蓝色，与背景渐变协调 */
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #4c6ef5; /* 悬停时稍亮 */
+    }
+    
+    .btn-secondary {
+      background-color: #343a46; /* 深灰色，与模态框背景形成微妙对比 */
+      color: #e9ecef;
+      margin-right: 10px;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #495057; /* 悬停时稍亮 */
+    }
+    
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+    
+    .site-initial {
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    
+    /* 网站容器样式 */
+    .sites-wrapper {
+      width: 100%;
+      max-width: 2xl;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 10px;
+    }
+    
+    .sites-wrapper::-webkit-scrollbar {
+      height: 6px;
+    }
+    
+    .sites-wrapper::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+    
+    .sites-inner {
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      padding: 0;
+    }
+    
+    /* 内容容器 */
+    .content-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* 拖拽删除相关样式 */
+    .site-link.dragging {
+      opacity: 0.5;
+      transform: scale(0.9);
+    }
+    
+    .delete-zone {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(220, 38, 38, 0.2);
+      border: 2px dashed #dc2626;
+      color: #dc2626;
+      padding: 10px 20px;
+      border-radius: 8px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 900;
+    }
+    
+    .delete-zone.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* 图标样式调整 */
+    .site-box img, .site-box span {
+      pointer-events: none; /* 让图标不阻挡鼠标事件 */
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-custom text-gray-100 m-0 p-0">
+  <div class="container mx-auto px-4 flex flex-col items-center justify-center min-h-screen">
+    <!-- 搜索框容器 -->
+    <div class="w-full max-w-2xl mb-8 content-container">
+      <form action="https://www.bing.com/search" method="get" class="relative w-full">
+        <div class="search-container">
+          <input 
+            type="text" 
+            name="q" 
+            placeholder="搜索网页" 
+            class="custom-search-box py-3 px-8 rounded-full transition-all duration-300 text-lg" 
+            autocomplete="off"
+          >
+        </div>
+      </form>
+    </div>
+
+    <!-- 常用网站区域 -->
+    <div class="sites-wrapper">
+      <div class="sites-inner" id="sites-container">
+        <!-- 网站链接将通过JavaScript动态生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 删除区域 -->
+  <div class="delete-zone" id="delete-zone">
+    <i class="fa fa-trash mr-2"></i>拖到此处删除
+  </div>
+
+  <!-- 添加/编辑网站模态框 -->
+  <div class="modal-overlay" id="site-modal">
+    <div class="modal">
+      <h3 class="text-xl mb-4" id="modal-title">添加快捷网站</h3>
+      <form id="site-form">
+        <input type="hidden" id="site-id">
+        <div class="form-group">
+          <label for="site-name">网站名称</label>
+          <input type="text" id="site-name" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="site-url">网站地址</label>
+          <input type="url" id="site-url" class="form-control" placeholder="https://" required>
+        </div>
+        <div class="form-group">
+          <label for="site-icon">图标地址（可选）</label>
+          <input type="url" id="site-icon" class="form-control" placeholder="https://">
+          <small class="text-gray-400 text-sm">留空将使用网站默认图标</small>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancel-btn">取消</button>
+          <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // 存储网站数据的数组
+    let sites = [];
+    const SITES_KEY = 'custom_sites';
+    const MAX_SITES = 8; // 最多8个方块（包括添加按钮会被替换）
+    
+    // 特定网站的图标URL映射表，解决无法自动获取图标的问题
+    const customFaviconMap = {
+      'doubao.com': 'https://www.doubao.com/favicon.ico',
+      'gemini.google.com': 'https://gemini.google.com/favicon.ico',
+      'google.com': 'https://www.google.com/s2/favicons?domain=google.com',
+      'baidu.com': 'https://www.baidu.com/favicon.ico'
+    };
+    
+    // DOM元素
+    const sitesContainer = document.getElementById('sites-container');
+    const siteModal = document.getElementById('site-modal');
+    const siteForm = document.getElementById('site-form');
+    const modalTitle = document.getElementById('modal-title');
+    const siteIdInput = document.getElementById('site-id');
+    const siteNameInput = document.getElementById('site-name');
+    const siteUrlInput = document.getElementById('site-url');
+    const siteIconInput = document.getElementById('site-icon');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const deleteZone = document.getElementById('delete-zone');
+    let draggedSiteId = null;
+    
+    // 初始化
+    function init() {
+      // 从localStorage加载网站数据
+      const savedSites = localStorage.getItem(SITES_KEY);
+      if (savedSites) {
+        sites = JSON.parse(savedSites);
+        // 确保不超过最大数量
+        if (sites.length > MAX_SITES) {
+          sites = sites.slice(0, MAX_SITES);
+          saveSites();
+        }
+      } else {
+        // 默认网站数据（包含豆包和Gemini）
+        sites = [
+          { id: 1, name: '百度', url: 'https://www.baidu.com' },
+          { id: 2, name: '必应', url: 'https://www.bing.com' },
+          { id: 3, name: 'GitHub', url: 'https://github.com' },
+          { id: 4, name: 'YouTube', url: 'https://www.youtube.com' },
+          { id: 5, name: '维基百科', url: 'https://www.wikipedia.org' },
+          { id: 6, name: '豆包', url: 'https://www.doubao.com' },
+          { id: 7, name: 'Gemini', url: 'https://gemini.google.com' }
+        ];
+        saveSites();
+      }
+      
+      renderSites();
+      setupEventListeners();
+    }
+    
+    // 保存网站数据到localStorage
+    function saveSites() {
+      localStorage.setItem(SITES_KEY, JSON.stringify(sites));
+    }
+    
+    // 渲染网站列表
+    function renderSites() {
+      sitesContainer.innerHTML = '';
+      
+      // 添加现有网站
+      sites.forEach(site => {
+        const siteLink = createSiteElement(site);
+        sitesContainer.appendChild(siteLink);
+      });
+      
+      // 只有在未达到最大数量时才显示添加按钮
+      if (sites.length < MAX_SITES) {
+        const addButton = createAddButton();
+        sitesContainer.appendChild(addButton);
+      }
+    }
+    
+    // 创建网站元素
+    function createSiteElement(site) {
+      const siteLink = document.createElement('a');
+      siteLink.href = site.url;
+      siteLink.className = 'site-link';
+      siteLink.target = '_blank';
+      siteLink.setAttribute('draggable', 'true');
+      
+      // 拖拽事件
+      siteLink.addEventListener('dragstart', function(e) {
+        draggedSiteId = site.id;
+        siteLink.classList.add('dragging');
+        deleteZone.classList.add('active');
+        e.dataTransfer.setData('text/plain', site.id);
+      });
+      
+      siteLink.addEventListener('dragend', function() {
+        siteLink.classList.remove('dragging');
+        deleteZone.classList.remove('active');
+        draggedSiteId = null;
+      });
+      
+      // 右键点击编辑
+      siteLink.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        editSite(site.id);
+      });
+      
+      const siteBox = document.createElement('div');
+      siteBox.className = 'site-box';
+      
+      // 网站图标
+      const iconImg = document.createElement('img');
+      iconImg.alt = site.name;
+      iconImg.className = 'w-6 h-6';
+      
+      // 获取图标URL（优先使用自定义映射，然后是网站提供的，最后是首字母）
+      const iconUrl = getFaviconUrl(site.url);
+      iconImg.src = iconUrl;
+      
+      // 多层次错误处理，确保图标显示
+      let errorCount = 0;
+      iconImg.onerror = function() {
+        errorCount++;
+        // 第一次错误尝试备选URL
+        if (errorCount === 1) {
+          iconImg.src = getFallbackFaviconUrl(site.url);
+        } 
+        // 第二次错误则显示首字母
+        else {
+          siteBox.innerHTML = `<span class="site-initial">${site.name.charAt(0)}</span>`;
+        }
+      };
+      
+      siteBox.appendChild(iconImg);
+      
+      // 网站名称
+      const siteName = document.createElement('span');
+      siteName.className = 'site-name';
+      siteName.textContent = site.name;
+      
+      siteLink.appendChild(siteBox);
+      siteLink.appendChild(siteName);
+      
+      return siteLink;
+    }
+    
+    // 创建添加网站按钮
+    function createAddButton() {
+      const addLink = document.createElement('div');
+      addLink.className = 'site-link cursor-pointer';
+      
+      const addBox = document.createElement('div');
+      addBox.className = 'site-box add-site-btn';
+      addBox.innerHTML = '<i class="fa fa-plus"></i>';
+      addBox.onclick = openAddModal;
+      
+      const addText = document.createElement('span');
+      addText.className = 'site-name';
+      addText.textContent = '添加';
+      
+      addLink.appendChild(addBox);
+      addLink.appendChild(addText);
+      
+      return addLink;
+    }
+    
+    // 获取网站图标URL，优先使用自定义映射
+    function getFaviconUrl(url) {
+      try {
+        const parsedUrl = new URL(url);
+        // 检查是否有自定义图标映射
+        for (const domain in customFaviconMap) {
+          if (parsedUrl.hostname.includes(domain)) {
+            return customFaviconMap[domain];
+          }
+        }
+        // 没有自定义映射则使用默认位置
+        return `${parsedUrl.protocol}//${parsedUrl.hostname}/favicon.ico`;
+      } catch (e) {
+        return '';
+      }
+    }
+    
+    // 获取备选图标URL（使用Google的favicon服务作为备用）
+    function getFallbackFaviconUrl(url) {
+      try {
+        const parsedUrl = new URL(url);
+        // 使用Google的favicon服务作为备用
+        return `https://www.google.com/s2/favicons?domain=${parsedUrl.hostname}`;
+      } catch (e) {
+        return '';
+      }
+    }
+    
+    // 打开添加网站模态框
+    function openAddModal() {
+      // 检查是否已达到最大数量
+      if (sites.length >= MAX_SITES) {
+        return;
+      }
+      
+      modalTitle.textContent = '添加快捷网站';
+      siteIdInput.value = '';
+      siteNameInput.value = '';
+      siteUrlInput.value = '';
+      siteIconInput.value = '';
+      siteModal.classList.add('active');
+    }
+    
+    // 打开编辑网站模态框
+    function editSite(id) {
+      const site = sites.find(s => s.id === id);
+      if (site) {
+        modalTitle.textContent = '编辑快捷网站';
+        siteIdInput.value = site.id;
+        siteNameInput.value = site.name;
+        siteUrlInput.value = site.url;
+        siteIconInput.value = site.icon || '';
+        siteModal.classList.add('active');
+      }
+    }
+    
+    // 删除网站
+    function deleteSite(id) {
+      sites = sites.filter(site => site.id !== id);
+      saveSites();
+      renderSites();
+    }
+    
+    // 关闭模态框
+    function closeModal() {
+      siteModal.classList.remove('active');
+    }
+    
+    // 设置事件监听器
+    function setupEventListeners() {
+      // 表单提交
+      siteForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // 检查是否已达到最大数量（添加新网站时）
+        if (!siteIdInput.value && sites.length >= MAX_SITES) {
+          closeModal();
+          return;
+        }
+        
+        const id = siteIdInput.value ? parseInt(siteIdInput.value) : Date.now();
+        const name = siteNameInput.value.trim();
+        let url = siteUrlInput.value.trim();
+        const icon = siteIconInput.value.trim() || '';
+        
+        // 确保URL以http开头
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          url = 'https://' + url;
+        }
+        
+        if (siteIdInput.value) {
+          // 编辑现有网站
+          const index = sites.findIndex(s => s.id === id);
+          if (index !== -1) {
+            sites[index] = { id, name, url, icon };
+          }
+        } else {
+          // 添加新网站
+          sites.push({ id, name, url, icon });
+        }
+        
+        saveSites();
+        renderSites();
+        closeModal();
+      });
+      
+      // 取消按钮
+      cancelBtn.addEventListener('click', closeModal);
+      
+      // 点击模态框外部关闭
+      siteModal.addEventListener('click', function(e) {
+        if (e.target === siteModal) {
+          closeModal();
+        }
+      });
+      
+      // 自动聚焦搜索框
+      document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.querySelector('input[name="q"]');
+        if (searchInput) {
+          searchInput.focus();
+        }
+      });
+      
+      // 配置删除区域
+      deleteZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        deleteZone.style.backgroundColor = 'rgba(220, 38, 38, 0.4)';
+      });
+      
+      deleteZone.addEventListener('dragleave', function() {
+        deleteZone.style.backgroundColor = 'rgba(220, 38, 38, 0.2)';
+      });
+      
+      deleteZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        deleteZone.style.backgroundColor = 'rgba(220, 38, 38, 0.2)';
+        deleteZone.classList.remove('active');
+        
+        if (draggedSiteId) {
+          deleteSite(draggedSiteId);
+        }
+      });
+    }
+    
+    // 初始化页面
+    init();
+  </script>
+</body>
+</html>
