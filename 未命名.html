@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>搜索</title>
+  <!-- 引入外部资源 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .bg-gradient-custom {
+        background: linear-gradient(to bottom, #463337, #1c223e, #1b1d1f);
+      }
+    }
+  </style>
+  
+  <style>
+    body {
+      min-height: 100vh;
+    }
+    
+    /* 搜索框外层容器 - 同比例放大边框 */
+    .search-container {
+      position: relative;
+      border: 8px solid #16191c; /* 边框宽度减小，更扁 */
+      border-radius: 9999px;
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* 自定义搜索框样式 */
+    .custom-search-box {
+      background-color: #27292f;
+      border: none;
+      color: #a19f9d;
+      width: 100%;
+    }
+    
+    /* 移除聚焦时的默认outline效果 */
+    .custom-search-box:focus {
+      outline: none;
+    }
+
+    /* 设置 placeholder 文字颜色 */
+    .custom-search-box::placeholder {
+      color: #9d9b99;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-custom text-gray-100 m-0 p-0">
+  <div class="container mx-auto px-4 flex items-center justify-center min-h-screen">
+    <!-- 带外层边框的搜索框容器 -->
+    <div class="w-full max-w-2xl">
+      <form action="https://www.bing.com/search" method="get" class="relative">
+        <div class="search-container">
+          <!-- 减小垂直内边距使搜索框更扁 -->
+          <input 
+            type="text" 
+            name="q" 
+            placeholder="搜索网页" 
+            class="custom-search-box py-2 px-8 rounded-full transition-all duration-300 text-lg" 
+            autocomplete="off"
+          >
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 页面加载后自动聚焦搜索框 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.querySelector('input[name="q"]');
+      if (searchInput) {
+        searchInput.focus();
+      }
+    });
+  </script>
+</body>
+</html>
